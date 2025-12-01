@@ -1,0 +1,377 @@
+{% extends "blog/base.html" %}
+{% block content %}
+  <section class="form-hero">
+    <div class="form-hero-content">
+      <h1>{% if form.instance.pk %}Edit Lost/Found Item{% else %}Report Lost/Found Item{% endif %}</h1>
+      <p class="form-hero-subtitle">Help reunite items with their owners in Kenya</p>
+    </div>
+  </section>
+
+  <div class="content" style="max-width:720px;margin:1rem auto;">
+    <form method="POST" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      
+      <fieldset class="form-group">
+        <legend class="border-bottom mb-4">{% if form.instance.pk %}Update Item Details{% else %}Report a Lost or Found Item{% endif %}</legend>
+        
+        <!-- Item Type Field -->
+        <div class="form-group">
+          <label for="{{ form.item_type.id_for_label }}"><strong>Item Type *</strong></label>
+          {{ form.item_type }}
+          {% if form.item_type.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.item_type.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">Is this item Lost or Found?</small>
+        </div>
+
+        <!-- Title Field -->
+        <div class="form-group">
+          <label for="{{ form.title.id_for_label }}"><strong>Item Name *</strong></label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.title.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">e.g., "Black iPhone 13", "Red Wallet"</small>
+        </div>
+
+        <!-- Category Field -->
+        <div class="form-group">
+          <label for="{{ form.category.id_for_label }}"><strong>Category *</strong></label>
+          {{ form.category }}
+          {% if form.category.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.category.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Location Field -->
+        <div class="form-group">
+          <label for="{{ form.location.id_for_label }}"><strong>Location *</strong></label>
+          {{ form.location }}
+          {% if form.location.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.location.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">Where was it lost/found? (e.g., "Nairobi CBD", "Karen")</small>
+        </div>
+
+        <!-- Date Lost/Found Field -->
+        <div class="form-group">
+          <label for="{{ form.date_item_lost_found.id_for_label }}"><strong>Date Lost/Found *</strong></label>
+          {{ form.date_item_lost_found }}
+          {% if form.date_item_lost_found.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.date_item_lost_found.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Content Field -->
+        <div class="form-group">
+          <label for="{{ form.content.id_for_label }}"><strong>Description *</strong></label>
+          {{ form.content }}
+          {% if form.content.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.content.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">Provide detailed description, distinguishing features, and any relevant contact info</small>
+        </div>
+
+        <!-- Status Field -->
+        <div class="form-group">
+          <label for="{{ form.status.id_for_label }}"><strong>Status *</strong></label>
+          {{ form.status }}
+          {% if form.status.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.status.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">Mark as "Active" if still looking, or "Resolved" if recovered</small>
+        </div>
+
+        <!-- Image Field -->
+        <div class="form-group">
+          <label for="{{ form.image.id_for_label }}"><strong>Item Photo</strong></label>
+          {{ form.image }}
+          {% if form.image.errors %}
+            <div class="invalid-feedback d-block">
+              {{ form.image.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">Upload a clear photo of the item (optional but recommended)</small>
+        </div>
+      </fieldset>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Update{% else %}Report Item{% endif %}</button>
+        <a href="{% url 'blog-home' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <style>
+    /* Hero Section */
+    .form-hero {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.85) 0%, rgba(59, 130, 246, 0.85) 100%),
+                  url('https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
+      color: white;
+      padding: 5rem 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-hero-content {
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .form-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
+      letter-spacing: -0.02em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-hero-subtitle {
+      font-size: 1.1rem;
+      margin: 0;
+      opacity: 0.95;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Content Section */
+    .content {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(16, 24, 40, 0.08);
+      margin-bottom: 3rem;
+    }
+
+    /* Form Group */
+    .form-group label {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #1f2933;
+      display: block;
+    }
+
+    .form-group select,
+    .form-group textarea,
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 1rem;
+      background: #f9fafb;
+      color: #1f2933;
+      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    }
+
+    .form-group input[type="date"],
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 1rem;
+      background: #f9fafb;
+      color: #1f2933;
+      transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+    }
+
+    .form-group select:hover,
+    .form-group textarea:hover,
+    .form-group input:hover {
+      background: white;
+      border-color: #9ca3af;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus,
+    .form-group input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+      outline: none;
+      background: white;
+    }
+
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-text {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .invalid-feedback {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    /* Fieldset */
+    fieldset {
+      margin-bottom: 1.5rem;
+    }
+
+    fieldset legend {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1f2933;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #2563eb !important;
+      width: 100%;
+    }
+
+    .border-bottom {
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.65rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: white;
+      margin-right: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #1f2933;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+      transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .form-hero {
+        padding: 3rem 1rem;
+        min-height: 250px;
+      }
+
+      .form-hero h1 {
+        font-size: 1.8rem;
+      }
+
+      .form-hero-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .content {
+        padding: 1.5rem;
+      }
+
+      .form-group label {
+        font-size: 0.95rem;
+      }
+
+      .form-group select,
+      .form-group textarea,
+      .form-group input[type="file"],
+      .form-group input[type="date"],
+      .form-group input[type="text"] {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+
+      fieldset legend {
+        font-size: 1rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      .btn-primary {
+        margin-right: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-hero {
+        padding: 2rem 0.75rem;
+        min-height: 200px;
+      }
+
+      .form-hero h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-hero-subtitle {
+        font-size: 0.85rem;
+      }
+
+      .content {
+        padding: 1rem;
+        border-radius: 8px;
+      }
+
+      fieldset legend {
+        font-size: 0.95rem;
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .form-group {
+        margin-bottom: 0.75rem;
+      }
+
+      .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+{% endblock %}

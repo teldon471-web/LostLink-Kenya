@@ -1,0 +1,13 @@
+{% extends "blog/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="content" style="max-width:420px;margin:1rem auto;">
+    <h2>Login</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <p class="text-muted mt-2">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+  </div>
+{% endblock %}

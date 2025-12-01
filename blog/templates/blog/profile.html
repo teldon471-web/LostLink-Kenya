@@ -1,0 +1,27 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="content" style="max-width:720px;margin:1rem auto;">
+    <h2>Profile</h2>
+    <p>Welcome, {{ user.username }}!</p>
+    <p>Email: {{ user.email }}</p>
+  </div>
+  <div class="media">
+    <img src="{{ user.profile.image.url}}" class="mr-3" alt="Profile Picture" style="width:150px;height:150px;">
+    <div class="media-body">
+      <h5 class="mt-0">{{ user.get_full_name|default:user.username }}</h5>
+      <p>{{ user.profile.bio }}</p>
+      <p><strong>Location:</strong> {{ user.profile.location }}</p>
+    </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <legendclass="boreder-bottom mb-4">ProfileInfo</legend>
+      {{ u_form|crispy }}
+      {{ p_form|crispy }}
+      <button type="submit" class="btn btn-primary mt-2">Update Profile</button>
+    </form>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+  <div class="content" style="max-width:520px;margin:1rem auto;">
+    <h2>Register</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Create account</button>
+    </form>
+    <p class="text-muted mt-2">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  </div>
+{% endblock %}

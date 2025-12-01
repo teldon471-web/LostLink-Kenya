@@ -1,0 +1,677 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<div class="post-detail-container">
+  <div class="post-detail-card">
+    <!-- Image Section -->
+      {% if post.image %}
+      <div class="detail-image-container">
+        <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}" alt="{{ post.title }}" class="detail-image">
+      </div>
+    {% endif %}
+
+    <!-- Header Section -->
+    <div class="detail-header">
+      <div class="detail-badges">
+        <span class="badge {% if post.item_type == 'lost' %}badge-danger{% else %}badge-success{% endif %}">
+          {% if post.item_type == 'lost' %}🔴 LOST{% else %}🟢 FOUND{% endif %}
+        </span>
+        <span class="badge badge-category">{{ post.get_category_display }}</span>
+        <span class="badge {% if post.status == 'active' %}badge-status-active{% else %}badge-status-resolved{% endif %}">
+          {{ post.get_status_display }}
+        </span>
+      </div>
+      <h1 class="detail-title">{{ post.title }}</h1>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="detail-grid">
+      <div class="detail-item">
+        <label>Item Type:</label>
+        <p>{{ post.get_item_type_display }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Category:</label>
+        <p>{{ post.get_category_display }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Location:</label>
+        <p>📍 {{ post.location }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Status:</label>
+        <p>{{ post.get_status_display }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Date {{ post.get_item_type_display|lower }}:</label>
+        <p>📅 {{ post.date_item_lost_found|date:"M d, Y" }}</p>
+      </div>
+      <div class="detail-item">
+        <label>Posted:</label>
+        <p>🕐 {{ post.date_posted|date:"M d, Y \a\t g:i A" }}</p>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="detail-description">
+      <h3>Description</h3>
+      <p>{{ post.content }}</p>
+    </div>
+
+    <!-- Author Section -->
+    <div class="author-section">
+      <h3>👤 Contact & Person Details</h3>
+      <div class="author-card">
+        <div class="author-info-grid">
+          <div class="author-avatar-large">
+            {% if post.author.profile.image and post.author.profile.image.name != 'default.jpg' %}
+              <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.author.profile.image.url }}" alt="{{ post.author.username }}" class="profile-image">
+            {% else %}
+              <div class="avatar-placeholder-large">
+                <span class="avatar-letter">{{ post.author.username|first|upper }}</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="author-details-large">
+            <h4>{{ post.author.username }}</h4>
+            {% if post.author.first_name or post.author.last_name %}
+              <p class="author-real-name">
+                <strong>Full Name:</strong> {{ post.author.first_name }} {{ post.author.last_name }}
+              </p>
+            {% endif %}
+            {% if post.author.email %}
+              <p class="author-email">
+                <strong>Email:</strong>
+                <a href="mailto:{{ post.author.email }}" class="contact-link">
+                  📧 {{ post.author.email }}
+                </a>
+              </p>
+            {% endif %}
+            <p class="member-since">
+              <strong>Member Since:</strong> {{ post.author.date_joined|date:"B d, Y" }}
+            </p>
+            <p class="member-status">
+              <strong>Status:</strong> 
+              {% if post.author.is_active %}
+                <span style="color: #16a34a;">✓ Active</span>
+              {% else %}
+                <span style="color: #dc2626;">✗ Inactive</span>
+              {% endif %}
+            </p>
+            {% if post.author.profile.bio %}
+              <p class="author-bio">
+                <strong>About:</strong> {{ post.author.profile.bio }}
+              </p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- User Stats -->
+        <div class="author-stats">
+          <div class="stat-box">
+            <div class="stat-value">{{ author_posts_count }}</div>
+            <div class="stat-label">Posts</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">{{ author_lost_count }}</div>
+            <div class="stat-label">Lost Items</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value">{{ author_found_count }}</div>
+            <div class="stat-label">Found Items</div>
+          </div>
+        </div>
+
+        <!-- User Actions -->
+        <div class="author-actions">
+          <a href="{% url 'user-posts' post.author.username %}" class="btn-view-profile">
+            📋 View All Posts by {{ post.author.username }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="detail-actions">
+      {% if user == post.author %}
+        <a href="{% url 'post-update' post.pk %}" class="btn btn-edit">✏️ Edit Post</a>
+        <a href="{% url 'post-delete' post.pk %}" class="btn btn-delete">🗑️ Delete Post</a>
+      {% else %}
+        {% if user.is_authenticated %}
+          <a href="mailto:{{ post.author.email }}" class="btn btn-contact">📧 Contact Author</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-contact">Login to Contact</a>
+        {% endif %}
+      {% endif %}
+      <a href="{% url 'blog-home' %}" class="btn btn-back">← Back to Items</a>
+    </div>
+  </div>
+
+  <!-- Related Posts Section -->
+  {% if related_posts %}
+    <div class="related-posts-section">
+      <h3>Related Items</h3>
+      <div class="related-posts-grid">
+        {% for related_post in related_posts %}
+          <div class="related-post-card">
+            {% if related_post.image %}
+              <img src="{{ related_post.image.url }}" alt="{{ related_post.title }}" class="related-image">
+            {% else %}
+              <div class="related-placeholder">
+                {% if related_post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}
+              </div>
+            {% endif %}
+            <div class="related-content">
+              <h4><a href="{% url 'post-detail' related_post.pk %}">{{ related_post.title|truncatewords:5 }}</a></h4>
+              <p class="related-location">📍 {{ related_post.location }}</p>
+              <a href="{% url 'post-detail' related_post.pk %}" class="btn-view-related">View →</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .post-detail-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .post-detail-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(16,24,40,0.08);
+    border: 1px solid #e6e6e6;
+  }
+
+  .detail-image-container {
+    width: 100%;
+    max-height: 400px;
+    overflow: hidden;
+    background: #f9fafb;
+  }
+
+  .detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail-header {
+    padding: 2rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .detail-badges {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .detail-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2933;
+    margin: 0;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-item label {
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .detail-item p {
+    font-size: 1.1rem;
+    color: #1f2933;
+    margin: 0;
+  }
+
+  .detail-description {
+    padding: 2rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .detail-description h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1f2933;
+    margin: 0 0 1rem 0;
+  }
+
+  .detail-description p {
+    color: #4b5563;
+    line-height: 1.8;
+    margin: 0;
+    font-size: 1rem;
+    white-space: pre-wrap;
+  }
+
+  .author-section {
+    padding: 2rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .author-section h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1f2933;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .author-card {
+    background: #fafafa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #f3f4f6;
+  }
+
+  .author-info-grid {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .author-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .author-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .author-avatar-large .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-placeholder-large {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 2.5rem;
+  }
+
+  .avatar-letter {
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .author-details-large h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    color: #1f2933;
+  }
+
+  .author-real-name {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  .author-email {
+    margin: 0.5rem 0;
+  }
+
+  .contact-link {
+    color: #0f766e;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .contact-link:hover {
+    color: #0d5d57;
+  }
+
+  .member-since {
+    margin: 0.5rem 0 0 0;
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+
+  .member-status {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+
+  .author-bio {
+    margin: 1rem 0 0 0;
+    color: #4b5563;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* Author Stats */
+  .author-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .stat-box {
+    text-align: center;
+    padding: 1rem;
+    background: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #f3f4f6;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f766e;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  /* Author Actions */
+  .author-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .btn-view-profile {
+    display: inline-block;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-view-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+  }
+
+  .detail-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+    background: #fafafa;
+  }
+
+  .detail-actions .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .btn-edit {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: white;
+  }
+
+  .btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+  }
+
+  .btn-delete {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .btn-delete:hover {
+    background: #fecaca;
+  }
+
+  .btn-contact {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .btn-contact:hover {
+    background: #bfdbfe;
+  }
+
+  .btn-back {
+    background: #e6e6e6;
+    color: #1f2933;
+    margin-left: auto;
+  }
+
+  .btn-back:hover {
+    background: #d4d4d4;
+  }
+
+  .related-posts-section {
+    margin-top: 3rem;
+    padding: 2rem 0;
+  }
+
+  .related-posts-section h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #1f2933;
+  }
+
+  .related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .related-post-card {
+    background: white;
+    border: 1px solid #e6e6e6;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .related-post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(16,24,40,0.1);
+  }
+
+  .related-image, .related-placeholder {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  .related-content {
+    padding: 1rem;
+  }
+
+  .related-content h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #1f2933;
+  }
+
+  .related-content h4 a {
+    color: #1f2933;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .related-content h4 a:hover {
+    color: #0f766e;
+  }
+
+  .related-location {
+    margin: 0.5rem 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .btn-view-related {
+    display: inline-block;
+    color: #0f766e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-view-related:hover {
+    color: #0d5d57;
+  }
+
+  /* Badge Styles */
+  .badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .badge-danger {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .badge-success {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  .badge-category {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .badge-status-active {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  .badge-status-resolved {
+    background: #e5e7eb;
+    color: #4b5563;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .post-detail-container {
+      margin: 1rem auto;
+    }
+
+    .detail-header {
+      padding: 1.5rem;
+    }
+
+    .detail-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+
+    .detail-title {
+      font-size: 1.5rem;
+    }
+
+    .detail-image-container {
+      max-height: 250px;
+    }
+
+    .author-info-grid {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .detail-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .detail-actions .btn {
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-back {
+      margin-left: 0;
+    }
+
+    .related-posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .detail-title {
+      font-size: 1.25rem;
+    }
+
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .author-avatar-large {
+      width: 80px;
+      height: 80px;
+    }
+  }
+</style>
+{% endblock %}

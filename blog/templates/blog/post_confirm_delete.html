@@ -1,0 +1,25 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+  <div class="confirm-delete-container">
+    <div class="confirm-card">
+      <h2>Are you sure you want to delete this post?</h2>
+      <p>This action cannot be undone.</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-delete">Confirm Delete</button>
+        <a href="{% url 'post-detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .confirm-delete-container { max-width: 720px; margin: 3rem auto; padding: 1rem; }
+    .confirm-card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); border:1px solid #e6e6e6; text-align:center; }
+    .confirm-card h2 { margin: 0 0 1rem 0; color:#1f2933 }
+    .confirm-card p { color:#6b7280; margin-bottom:1.5rem }
+    .btn { padding:0.6rem 1.2rem; border-radius:8px; text-decoration:none; display:inline-block; margin:0 0.5rem }
+    .btn-delete { background:#fee2e2; color:#dc2626; border:none }
+    .btn-delete:hover { background:#fecaca }
+    .btn-secondary { background:#e6e6e6; color:#1f2933 }
+  </style>
+{% endblock %}

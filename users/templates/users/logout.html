@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+  <div class="content" style="max-width:520px;margin:1rem auto;">
+    <h2>Logged Out Successfully</h2>
+    <p class="lead">You have been successfully logged out.</p>
+
+    <div class="mt-3">
+      <a href="{% url 'blog-home' %}" class="btn btn-primary">Back to Home</a>
+      <a href="{% url 'login' %}" class="btn btn-outline" style="color:#0f766e;border-color:#0f766e">Login Again</a>
+    </div>
+  </div>
+{% endblock %}

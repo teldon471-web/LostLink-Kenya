@@ -1,0 +1,16 @@
+# Systemd service file for Gunicorn
+# Save as /etc/systemd/system/gunicorn.service (replace ubuntu/myproject paths)
+
+[Unit]
+Description=gunicorn daemon for LostLink Kenya
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/myproject
+Environment="PATH=/home/ubuntu/myproject/venv/bin"
+ExecStart=/home/ubuntu/myproject/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 myproject.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

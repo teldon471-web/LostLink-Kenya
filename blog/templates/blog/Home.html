@@ -1,0 +1,1025 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+  <!-- Hero Section with Call-to-Action -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">LostLink Kenya</h1>
+      <p class="hero-subtitle">Find Your Lost Items • Help Others Reconnect</p>
+      <div class="hero-actions">
+        {% if user.is_authenticated %}
+          <a href="{% url 'post-create' %}" class="btn btn-primary btn-lg">Report Lost Item</a>
+          <a href="{% url 'post-create' %}" class="btn btn-success btn-lg">Report Found Item</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Login to Report</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Stats Section -->
+  <section class="stats-section mb-5">
+    <div class="stat-card">
+      <div class="stat-number">{{ posts|length }}</div>
+      <div class="stat-label">Active Items</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ user.profile.posts|length|default:0 }}</div>
+      <div class="stat-label">Your Posts</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">🔗</div>
+      <div class="stat-label">Helping Reunite</div>
+    </div>
+  </section>
+
+  <!-- Carousel Section -->
+  <section class="carousel-section mb-5">
+    <h2 class="carousel-title">Why LostLink Kenya Matters</h2>
+    <div class="carousel-container">
+      <div class="carousel-wrapper">
+        <div class="carousel-track">
+          <!-- Slide 1: Community Connection -->
+          <div class="carousel-slide">
+            <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Community Connection">
+            <div class="slide-overlay">
+              <h3>Community Connection</h3>
+              <p>Bringing people together to help recover lost items</p>
+            </div>
+          </div>
+
+          <!-- Slide 2: Search & Discovery -->
+          <div class="carousel-slide">
+            <img src="https://images.pexels.com/photos/3945683/pexels-photo-3945683.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Search & Discovery">
+            <div class="slide-overlay">
+              <h3>Search & Discovery</h3>
+              <p>Find your lost items through advanced filtering</p>
+            </div>
+          </div>
+
+          <!-- Slide 3: Trust & Security -->
+          <div class="carousel-slide">
+            <img src="https://images.pexels.com/photos/3825517/pexels-photo-3825517.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Trust & Security">
+            <div class="slide-overlay">
+              <h3>Trust & Security</h3>
+              <p>Verified users and secure messaging platform</p>
+            </div>
+          </div>
+
+          <!-- Slide 4: Recovery Success -->
+          <div class="carousel-slide">
+            <img src="https://images.pexels.com/photos/3831906/pexels-photo-3831906.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Recovery Success">
+            <div class="slide-overlay">
+              <h3>Recovery Success</h3>
+              <p>Successfully reunite with your belongings</p>
+            </div>
+          </div>
+
+          <!-- Slide 5: Local Kenya Focus -->
+          <div class="carousel-slide">
+            <img src="https://images.pexels.com/photos/3807513/pexels-photo-3807513.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Local Kenya Focus">
+            <div class="slide-overlay">
+              <h3>Local Kenya Focus</h3>
+              <p>Dedicated to serving Kenyan communities</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button class="carousel-btn carousel-btn-prev" onclick="moveCarousel(-1)">❮</button>
+        <button class="carousel-btn carousel-btn-next" onclick="moveCarousel(1)">❯</button>
+
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+          <button class="indicator active" onclick="goToSlide(0)"></button>
+          <button class="indicator" onclick="goToSlide(1)"></button>
+          <button class="indicator" onclick="goToSlide(2)"></button>
+          <button class="indicator" onclick="goToSlide(3)"></button>
+          <button class="indicator" onclick="goToSlide(4)"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const totalSlides = slides.length;
+
+    function updateCarousel() {
+      const track = document.querySelector('.carousel-track');
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      document.querySelectorAll('.indicator').forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    function moveCarousel(direction) {
+      currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+      updateCarousel();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateCarousel();
+    }
+
+    // Auto-rotate carousel every 5 seconds
+    setInterval(() => {
+      moveCarousel(1);
+    }, 5000);
+  </script>
+
+  <!-- Search and Filter Section -->
+  <section class="search-filter mb-4">
+    <form method="get" class="filter-form">
+      <div class="filter-header">
+        <input type="text" name="q" placeholder="Search by title or description..." value="{{ search_query }}" class="form-control search-input">
+        
+        <button type="button" class="btn btn-outline-primary filter-toggle" id="filterToggle">
+          Filter
+          <span class="chevron">▼</span>
+          {% if selected_item_type or selected_category or selected_location or selected_status %}
+            <span class="filter-badge">✓ Active</span>
+          {% endif %}
+        </button>
+        
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{% url 'blog-home' %}" class="btn btn-secondary">Clear All</a>
+      </div>
+
+      <!-- Collapsible Filter Dropdown -->
+      <div class="filter-dropdown" id="filterDropdown" style="display: none;">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label for="item_type">Item Type:</label>
+            <select name="item_type" id="item_type" class="form-control">
+              <option value="">- All Types -</option>
+              <option value="lost" {% if selected_item_type == "lost" %}selected{% endif %}>Lost Item</option>
+              <option value="found" {% if selected_item_type == "found" %}selected{% endif %}>Found Item</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="category">Category:</label>
+            <select name="category" id="category" class="form-control">
+              <option value="">- All Categories -</option>
+              {% for value, label in categories %}
+                <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="location">Location:</label>
+            <select name="location" id="location" class="form-control">
+              <option value="">- All Locations -</option>
+              {% for loc in locations %}
+                <option value="{{ loc }}" {% if selected_location == loc %}selected{% endif %}>{{ loc }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="status">Status:</label>
+            <select name="status" id="status" class="form-control">
+              <option value="">- All Status -</option>
+              {% for value, label in statuses %}
+                <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- Items Grid Section -->
+  <section class="items-grid-section mb-5">
+    <h2 class="section-title">Recent Lost & Found Items</h2>
+    
+    {% if posts %}
+      <div class="items-grid">
+        {% for post in posts %}
+          <article class="item-card" data-href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">
+            <!-- Image Container -->
+            <div class="item-image-container">
+                {% if post.image %}
+                <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">
+                  <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}" alt="{{ post.title }}" class="card-img">
+                </a>
+              {% else %}
+                <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">
+                  <div class="placeholder-image">
+                    <span class="placeholder-icon">
+                      {% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}
+                    </span>
+                  </div>
+                </a>
+              {% endif %}
+              <div class="item-badge-top">
+                <span class="badge {% if post.item_type == 'lost' %}badge-danger{% else %}badge-success{% endif %}">
+                  {{ post.get_item_type_display|upper }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Content -->
+            <div class="card-content">
+              <h3 class="item-title">
+                <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+              </h3>
+
+              <!-- Category & Status Badges -->
+              <div class="badge-group">
+                <span class="badge badge-category">{{ post.get_category_display }}</span>
+                <span class="badge {% if post.status == 'active' %}badge-status-active{% else %}badge-status-resolved{% endif %}">
+                  {{ post.get_status_display }}
+                </span>
+              </div>
+
+              <!-- Location & Date Info -->
+              <div class="info-row">
+                <span class="info-item">
+                  <strong>📍</strong> {{ post.location|default:"Not specified" }}
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-item">
+                  <strong>📅</strong> {{ post.date_item_lost_found|date:"M d, Y"|default:"Date not set" }}
+                </span>
+              </div>
+
+              <!-- Description Preview -->
+              <p class="item-description">
+                {{ post.content|truncatewords:25 }}
+              </p>
+
+              <!-- Author Info -->
+              <div class="author-info">
+                <div class="author-avatar">
+                  {% if post.author.profile.image %}
+                    <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.author.profile.image.url }}" alt="{{ post.author.username }}">
+                  {% else %}
+                    <div class="avatar-placeholder">{{ post.author.username|first|upper }}</div>
+                  {% endif %}
+                </div>
+                <div class="author-details">
+                  <p class="author-name">{{ post.author.username }}</p>
+                  <p class="post-date">{{ post.date_posted|timesince }} ago</p>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}" class="btn btn-view-details">View Details →</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No Lost or Found Items Yet</h3>
+        <p>Be the first to help reunite someone with their lost items!</p>
+        {% if user.is_authenticated %}
+          <a href="{% url 'post-create' %}" class="btn btn-primary">Report an Item</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary">Login to Report</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+  <style>
+    /* Carousel Section */
+    .carousel-section {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      margin-bottom: 5rem;
+      padding: 0;
+    }
+
+    .carousel-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2933;
+      margin-bottom: 2rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 1rem;
+    }
+
+    .carousel-container {
+      width: 100vw;
+      position: relative;
+      margin-left: calc(-50vw + 50%);
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(16,24,40,0.15);
+      background: #f9fafb;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      position: relative;
+      height: 350px;
+      overflow: hidden;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .slide-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .slide-overlay h3 {
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 700;
+    }
+
+    .slide-overlay p {
+      margin: 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* Carousel Navigation Buttons */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.9);
+      border: none;
+      color: #0f766e;
+      font-size: 1.5rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 3;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .carousel-btn:hover {
+      background: white;
+      color: #0d5d57;
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .carousel-btn-prev {
+      left: 1rem;
+    }
+
+    .carousel-btn-next {
+      right: 1rem;
+    }
+
+    /* Carousel Indicators */
+    .carousel-indicators {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.75rem;
+      z-index: 3;
+    }
+
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.6);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 0;
+    }
+
+    .indicator:hover {
+      background: rgba(255,255,255,0.9);
+      transform: scale(1.2);
+    }
+
+    .indicator.active {
+      background: white;
+      transform: scale(1.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Hero Section with Background Image */
+    .hero-section {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.75) 0%, rgba(59, 130, 246, 0.75) 100%), 
+                  url('https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      border-radius: 12px;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 1rem 0;
+      letter-spacing: -0.02em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      margin: 0 0 2rem 0;
+      opacity: 0.95;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-lg {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    .btn-lg:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Stats Section */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(16,24,40,0.1);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* Items Grid */
+    .items-grid-section {
+      margin: 3rem 0;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #1f2933;
+      text-align: center;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Item Card */
+    .item-card {
+      background: white;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .item-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 24px rgba(16,24,40,0.12);
+      border-color: #0f766e;
+    }
+
+    /* Image Container */
+    .item-image-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      background: #f9fafb;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .item-card:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .placeholder-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      color: #9ca3af;
+    }
+
+    .placeholder-icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Badge Top */
+    .item-badge-top {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .badge-success {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .badge-category {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-status-active {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .badge-status-resolved {
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    /* Card Content */
+    .card-content {
+      padding: 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-title {
+      margin: 0 0 0.75rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .item-title a {
+      color: #1f2933;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .item-title a:hover {
+      color: #0f766e;
+    }
+
+    /* Badge Group */
+    .badge-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Info Row */
+    .info-row {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Description */
+    .item-description {
+      margin: 1rem 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Author Info */
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .author-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .author-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f766e 0%, #0ea5a4 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .author-details {
+      flex: 1;
+    }
+
+    .author-name {
+      margin: 0;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1f2933;
+    }
+
+    .post-date {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    /* View Details Button */
+    .btn-view-details {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+      display: block;
+    }
+
+    .btn-view-details:hover {
+      transform: translateX(2px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: white;
+      border: 2px dashed #e6e6e6;
+      border-radius: 10px;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      color: #1f2933;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .empty-state p {
+      color: #6b7280;
+      margin: 0 0 1.5rem 0;
+    }
+
+    /* Pagination */
+    .pagination-section {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .pagination {
+      list-style: none;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    .page-item {
+      display: inline;
+    }
+
+    .page-link {
+      display: inline-block;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #444444;
+      border-radius: 6px;
+      color: #3b82f6;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-weight: 500;
+      background: #2a2a2a;
+    }
+
+    .page-link:hover {
+      background: #3a3a3a;
+      border-color: #3b82f6;
+    }
+
+    .page-item.active .page-link {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    .page-item.disabled .page-link {
+      color: #666666;
+      cursor: not-allowed;
+      background: #1a1a1a;
+      border-color: #333333;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+      }
+
+      .carousel-slide {
+        height: 250px;
+      }
+
+      .carousel-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+
+      .carousel-btn-prev {
+        left: 0.5rem;
+      }
+
+      .carousel-btn-next {
+        right: 0.5rem;
+      }
+
+      .slide-overlay {
+        padding: 1.5rem 1rem;
+      }
+
+      .slide-overlay h3 {
+        font-size: 1.2rem;
+      }
+
+      .slide-overlay p {
+        font-size: 0.9rem;
+      }
+
+      .carousel-title {
+        font-size: 1.5rem;
+      }
+
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .stats-section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script>
+    // Filter Dropdown Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterToggle = document.getElementById('filterToggle');
+      const filterDropdown = document.getElementById('filterDropdown');
+
+      if (filterToggle && filterDropdown) {
+        // Toggle dropdown on button click
+        filterToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          const isVisible = filterDropdown.style.display !== 'none';
+          filterDropdown.style.display = isVisible ? 'none' : 'block';
+          filterToggle.classList.toggle('active');
+        });
+
+        // Close dropdown when a filter changes
+        const filterInputs = filterDropdown.querySelectorAll('select, input[type="text"]');
+        filterInputs.forEach(input => {
+          input.addEventListener('change', function() {
+            // Keep dropdown open, user may want to adjust multiple filters
+          });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!filterToggle.contains(e.target) && !filterDropdown.contains(e.target)) {
+            filterDropdown.style.display = 'none';
+            filterToggle.classList.remove('active');
+          }
+        });
+
+        // Show dropdown if any filters are already applied
+        const hasActiveFilters = 
+          document.getElementById('item_type').value !== '' ||
+          document.getElementById('category').value !== '' ||
+          document.getElementById('location').value !== '' ||
+          document.getElementById('status').value !== '';
+        
+        if (hasActiveFilters) {
+          filterDropdown.style.display = 'block';
+          filterToggle.classList.add('active');
+        }
+      }
+    });
+
+    // Carousel functionality
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const totalSlides = slides.length;
+
+    function showSlide(n) {
+      if (totalSlides === 0) return;
+      
+      currentSlide = (n + totalSlides) % totalSlides;
+      const track = document.querySelector('.carousel-track');
+      if (track) {
+        track.style.transform = 'translateX(' + (-currentSlide * 100) + '%)';
+      }
+      
+      indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    function nextSlide() {
+      showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      showSlide(currentSlide - 1);
+    }
+
+    // Attach button listeners if they exist
+    const nextBtn = document.querySelector('.carousel-btn-next');
+    const prevBtn = document.querySelector('.carousel-btn-prev');
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+    // Attach indicator listeners
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => showSlide(index));
+    });
+
+    // Auto-rotate carousel every 5 seconds
+    setInterval(nextSlide, 5000);
+  </script>
+
+  <script>
+    // Make whole item card clickable (except when clicking links/buttons inside)
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.item-card[data-href]').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // ignore clicks on links, buttons, inputs
+          if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input')) return;
+          const href = this.dataset.href;
+          if (href) {
+            window.location = href;
+          }
+        });
+        // keyboard accessibility
+        card.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            const href = this.dataset.href;
+            if (href) window.location = href;
+          }
+        });
+      });
+    });
+  </script>
+
+{% endblock %}
