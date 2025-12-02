@@ -16,7 +16,30 @@
         <header class="site-header">
             <div class="container">
                 <div class="navbar-wrapper">
-                    <div class="site-title"><a href="{% url 'blog-home' %}" aria-label="Home" style="color:inherit;text-decoration:none"></a></div>
+                    <div class="site-title">
+                        <a href="{% url 'blog-home' %}" aria-label="Home" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:0.6rem">
+                                                        <!-- Inline SVG logo to avoid static file fetching issues in development -->
+                                                        <svg width="140" height="32" viewBox="0 0 180 40" role="img" aria-labelledby="logoTitle logoDesc" xmlns="http://www.w3.org/2000/svg" class="site-logo" style="display:block;">
+                                                            <title id="logoTitle">LostLink Kenya</title>
+                                                            <desc id="logoDesc">A stylized chain link icon and the text LostLink Kenya</desc>
+                                                            <defs>
+                                                                <linearGradient id="g" x1="0" x2="1">
+                                                                    <stop offset="0" stop-color="#0ea5a4" />
+                                                                    <stop offset="1" stop-color="#2563eb" />
+                                                                </linearGradient>
+                                                            </defs>
+                                                            <rect rx="8" ry="8" width="40" height="40" fill="url(#g)" />
+                                                            <g transform="translate(10,8) scale(0.9)" fill="none" stroke="#fff" stroke-width="2">
+                                                                <path d="M2 10c0-3 3-6 6-6h4" stroke-linecap="round" stroke-linejoin="round" />
+                                                                <path d="M14 6c3 0 6 3 6 6v4" stroke-linecap="round" stroke-linejoin="round" />
+                                                            </g>
+                                                            <g transform="translate(50,25)">
+                                                                <text x="0" y="0" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a">LostLink</text>
+                                                                <text x="0" y="16" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#6b7280">Kenya</text>
+                                                            </g>
+                                                        </svg>
+                        </a>
+                    </div>
                     <button class="navbar-toggle" id="navbarToggle">
                         <span></span>
                         <span></span>
@@ -62,7 +85,22 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
         <style>
-            /* Simple dropdown menu styles placed here for quick iteration */
+            /* Layout: put nav/menu to the right of the header */
+            .navbar-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            /* Ensure the menu wrapper pushes to the far right */
+            .nav-menu-wrapper {
+                margin-left: auto;
+            }
+
+            /* Site title / logo */
+            .site-title a { display: inline-flex; align-items: center; gap: 0.5rem; }
+            .site-logo { display: block; height: 32px; width: auto; }
+
+            /* Nav styles: desktop shows horizontal right-aligned menu, mobile keeps dropdown/toggle */
             .nav-menu-toggle {
                 background: transparent;
                 border: 1px solid rgba(0,0,0,0.08);
@@ -70,32 +108,46 @@
                 border-radius: 6px;
                 cursor: pointer;
                 font-weight: 600;
+                display: none; /* hidden on desktop */
             }
+
+            /* Desktop / wide screens: show nav items horizontally and push to the far right */
             .nav-menu {
                 list-style: none;
                 margin: 0;
-                padding: 0.5rem 0;
-                position: absolute;
-                right: 0;
-                top: 38px;
-                min-width: 200px;
-                background: white;
-                border: 1px solid #e6e6e6;
-                box-shadow: 0 8px 24px rgba(16,24,40,0.12);
-                border-radius: 8px;
-                display: none;
+                padding: 0;
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                position: static;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                border-radius: 0;
                 z-index: 40;
             }
-            .nav-menu.active,
-            .nav-menu-wrapper:hover .nav-menu {
-                display: block;
-            }
+
             .nav-menu li { padding: 0; }
-            .nav-menu .nav-link { display: block; padding: 0.6rem 1rem; color: #0f172a; text-decoration: none; }
+            .nav-menu .nav-link { display: inline-block; padding: 0.5rem 0.75rem; color: #0f172a; text-decoration: none; border-radius:6px; }
             .nav-menu .nav-link:hover { background: #f3f4f6; }
-            /* keep existing mobile toggle behavior unaffected */
+
+            /* On wide screens position the menu at the extreme right edge of the viewport */
+            @media (min-width: 769px) {
+                .nav-menu-wrapper {
+                    position: fixed;
+                    right: 12px;
+                    top: 12px;
+                    z-index: 60;
+                }
+            }
+
+            /* Show the dropdown behavior only on small screens */
             @media (max-width: 768px) {
-                .nav-menu { position: static; box-shadow: none; border: none; display: none; }
+                .nav-menu-toggle { display: inline-block; }
+                .nav-menu { position: absolute; right: 0; top: 38px; min-width: 200px; background: white; border: 1px solid #e6e6e6; box-shadow: 0 8px 24px rgba(16,24,40,0.12); border-radius: 8px; display: none; }
+                .nav-menu.active,
+                .nav-menu-wrapper:hover .nav-menu { display: block; }
+                .nav-menu .nav-link { display: block; padding: 0.6rem 1rem; }
                 .nav-menu.active { display: block; }
             }
         </style>

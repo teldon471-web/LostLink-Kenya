@@ -202,15 +202,15 @@
     {% if posts %}
       <div class="items-grid">
         {% for post in posts %}
-          <article class="item-card" data-href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">
+          <article class="item-card" data-href="{% url 'post-detail' post.pk %}">
             <!-- Image Container -->
             <div class="item-image-container">
                 {% if post.image %}
-                <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">
-                  <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}" alt="{{ post.title }}" class="card-img">
+                <a href="{% url 'post-detail' post.pk %}">
+                  <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img">
                 </a>
               {% else %}
-                <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">
+                <a href="{% url 'post-detail' post.pk %}">
                   <div class="placeholder-image">
                     <span class="placeholder-icon">
                       {% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}
@@ -228,7 +228,7 @@
             <!-- Card Content -->
             <div class="card-content">
               <h3 class="item-title">
-                <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+                <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
               </h3>
 
               <!-- Category & Status Badges -->
@@ -260,7 +260,7 @@
               <div class="author-info">
                 <div class="author-avatar">
                   {% if post.author.profile.image %}
-                    <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.author.profile.image.url }}" alt="{{ post.author.username }}">
+                    <img src="{{ post.author.profile.image.url }}" alt="{{ post.author.username }}">
                   {% else %}
                     <div class="avatar-placeholder">{{ post.author.username|first|upper }}</div>
                   {% endif %}
@@ -272,7 +272,7 @@
               </div>
 
               <!-- Action Button -->
-              <a href="{{ request.scheme }}://{{ request.get_host }}{% url 'post-detail' post.pk %}" class="btn btn-view-details">View Details →</a>
+              <a href="{% url 'post-detail' post.pk %}" class="btn btn-view-details">View Details →</a>
             </div>
           </article>
         {% endfor %}

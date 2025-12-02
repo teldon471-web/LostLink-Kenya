@@ -5,7 +5,7 @@
     <!-- Image Section -->
       {% if post.image %}
       <div class="detail-image-container">
-        <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}" alt="{{ post.title }}" class="detail-image">
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="detail-image">
       </div>
     {% endif %}
 
@@ -64,7 +64,7 @@
         <div class="author-info-grid">
           <div class="author-avatar-large">
             {% if post.author.profile.image and post.author.profile.image.name != 'default.jpg' %}
-              <img src="{{ request.scheme }}://{{ request.get_host }}{{ post.author.profile.image.url }}" alt="{{ post.author.username }}" class="profile-image">
+              <img src="{{ post.author.profile.image.url }}" alt="{{ post.author.username }}" class="profile-image">
             {% else %}
               <div class="avatar-placeholder-large">
                 <span class="avatar-letter">{{ post.author.username|first|upper }}</span>
