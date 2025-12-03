@@ -1,61 +1,130 @@
-{% extends 'blog/base.html' %}
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: url("{% static 'blog/hero_bg.png' %}") no-repeat center center;
+        background-size: cover;
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-overlay {
+        background: rgba(15, 23, 42, 0.7);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(2px);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="landing-hero" style="background:linear-gradient(135deg, rgba(37,99,235,0.85), rgba(59,130,246,0.85)), url('https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg');background-size:cover;background-position:center;color:white;padding:4rem 1rem;border-radius:8px;margin:2rem 0;">
-  <div style="max-width:1000px;margin:0 auto;text-align:center;">
-    <h1 style="font-size:2.5rem;margin-bottom:0.5rem;">LostLink Kenya</h1>
-    <p style="font-size:1.125rem;opacity:0.95;margin-bottom:1.25rem;">Join your community to help reunite lost items with their owners. Post, search, and connect quickly.</p>
-    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
-      {% if user.is_authenticated %}
-        <a class="btn btn-lg btn-primary" href="{% url 'post-create' %}">Report an Item</a>
-        <a class="btn btn-lg btn-light" href="{% url 'blog-home' %}">Browse Items</a>
-      {% else %}
-        <a class="btn btn-lg btn-primary" href="{% url 'login' %}">Login</a>
-        <a class="btn btn-lg btn-light" href="{% url 'register' %}">Register</a>
-      {% endif %}
-    </div>
-  </div>
-</section>
-
-<section style="max-width:1100px;margin:0 auto;padding:1rem;">
-  <h2 style="text-align:center;margin:1.5rem 0 1rem 0;">Recent Items</h2>
-      {% if recent_posts %}
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;">
-      {% for post in recent_posts %}
-        <div style="background:white;border-radius:8px;overflow:hidden;border:1px solid #e6e6e6;">
-          {% if post.image %}
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width:100%;height:150px;object-fit:cover;display:block;">
-          {% else %}
-            <div style="height:150px;display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;font-size:2rem;">{% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}</div>
-          {% endif %}
-          <div style="padding:0.75rem;">
-            <h3 style="margin:0 0 0.5rem 0;font-size:1rem;"><a href="{% url 'post-detail' post.pk %}" style="text-decoration:none;color:#0f172a;">{{ post.title|truncatewords:6 }}</a></h3>
-            <p style="margin:0;color:#6b7280;font-size:0.9rem;">{{ post.content|truncatewords:12 }}</p>
-          </div>
+<div class="hero-section min-vh-75 d-flex align-items-center mb-5">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-3 fw-bold mb-4 text-white">
+                    Lost something?<br>
+                    <span
+                        style="background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Let's
+                        find it together.</span>
+                </h1>
+                <p class="lead text-light mb-5 opacity-75" style="max-width: 600px;">
+                    LostLink Kenya connects people who have lost items with those who found them.
+                    Join our community and help reunite people with their belongings.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'post-create' %}" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-lg">
+                        <i class="fas fa-bullhorn me-2"></i>Report Item
+                    </a>
+                    <a href="{% url 'blog-home' %}" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                        <i class="fas fa-search me-2"></i>Browse Items
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 mt-5 mt-lg-0 text-center">
+                <div class="glass-card p-4 d-inline-block animate__animated animate__fadeInRight">
+                    <i class="fas fa-search-location fa-10x text-primary opacity-50"></i>
+                </div>
+            </div>
         </div>
-      {% endfor %}
     </div>
-  {% else %}
-    <p style="text-align:center;color:#6b7280;">No recent items yet — be the first to post.</p>
-  {% endif %}
-</section>
+</div>
 
-<section style="max-width:900px;margin:2rem auto;padding:1rem;text-align:center;">
-  <h2>How it works</h2>
-  <p style="color:#6b7280;">Create a post with details and photos. The community can view and contact you to reunite items.</p>
-  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
-    <div style="flex:1;min-width:200px;background:white;padding:1rem;border-radius:8px;border:1px solid #e6e6e6;">
-      <h4>Post</h4>
-      <p style="margin:0;color:#6b7280;">Add details, category and photos to help identify the item.</p>
+<div class="row mt-5 pt-5">
+    <div class="col-12 text-center mb-5">
+        <h2 class="fw-bold text-dark">How it Works</h2>
+        <p class="text-muted">Simple steps to recover your items</p>
     </div>
-    <div style="flex:1;min-width:200px;background:white;padding:1rem;border-radius:8px;border:1px solid #e6e6e6;">
-      <h4>Search</h4>
-      <p style="margin:0;color:#6b7280;">Use filters to find items in your area.</p>
+    <div class="col-md-4 text-center mb-4">
+        <div class="glass-card p-4 h-100 hover-lift">
+            <div class="display-4 text-primary mb-3"><i class="fas fa-edit"></i></div>
+            <h4 class="text-dark">1. Post Details</h4>
+            <p class="text-muted">Describe what you lost or found, including location and photos.</p>
+        </div>
     </div>
-    <div style="flex:1;min-width:200px;background:white;padding:1rem;border-radius:8px;border:1px solid #e6e6e6;">
-      <h4>Connect</h4>
-      <p style="margin:0;color:#6b7280;">Contact the poster to confirm and arrange return.</p>
+    <div class="col-md-4 text-center mb-4">
+        <div class="glass-card p-4 h-100 hover-lift">
+            <div class="display-4 text-primary mb-3"><i class="fas fa-users"></i></div>
+            <h4 class="text-dark">2. Connect</h4>
+            <p class="text-muted">Our community views your post and helps in the search.</p>
+        </div>
     </div>
-  </div>
-</section>
+    <div class="col-md-4 text-center mb-4">
+        <div class="glass-card p-4 h-100 hover-lift">
+            <div class="display-4 text-primary mb-3"><i class="fas fa-handshake"></i></div>
+            <h4 class="text-dark">3. Reunite</h4>
+            <p class="text-muted">Get in touch securely and recover your lost item.</p>
+        </div>
+    </div>
+</div>
 
+<div class="row mt-5">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-center">
+        <h3 class="text-dark">Recent Activity</h3>
+        <a href="{% url 'blog-home' %}" class="text-decoration-none text-primary">View All <i
+                class="fas fa-arrow-right"></i></a>
+    </div>
+    {% for post in recent_posts %}
+    <div class="col-md-4 mb-4">
+        <div class="card glass-card h-100 text-dark border-0 hover-lift">
+            {% if post.image %}
+            <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}"
+                style="height: 200px; object-fit: cover; border-radius: 16px 16px 0 0;">
+            {% else %}
+            <div class="bg-secondary d-flex align-items-center justify-content-center"
+                style="height: 200px; border-radius: 16px 16px 0 0;">
+                <i class="fas fa-image fa-3x text-dark opacity-25"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="badge {% if post.item_type == 'lost' %}bg-danger{% else %}bg-success{% endif %}">
+                        {{ post.get_item_type_display }}
+                    </span>
+                    <small class="text-muted">{{ post.date_posted|date:"M d, Y" }}</small>
+                </div>
+                <h5 class="card-title text-truncate">{{ post.title }}</h5>
+                <p class="card-text text-muted small"><i class="fas fa-map-marker-alt me-1"></i> {{ post.location }}</p>
+                <a href="{% url 'post-detail' post.pk %}"
+                    class="btn btn-sm btn-outline-primary w-100 stretched-link">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

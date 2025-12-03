@@ -1,46 +1,37 @@
-{% extends 'blog/base.html' %}
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login{% endblock %}
+
 {% block content %}
-  <div class="content" style="max-width:420px;margin:1rem auto;">
-    <h2>Login</h2>
-
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-
-    {% if form.non_field_errors %}
-      <div class="alert alert-danger" role="alert">
-        {% for error in form.non_field_errors %}
-          <div>{{ error }}</div>
-        {% endfor %}
+<div class="row justify-content-center align-items-center min-vh-75">
+  <div class="col-md-6 col-lg-4">
+    <div class="glass-card p-5">
+      <div class="text-center mb-4">
+        <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+        <h2 class="text-dark fw-bold">Welcome Back</h2>
+        <p class="text-muted">Login to continue</p>
       </div>
-    {% endif %}
-
-    <form method="post" novalidate>
-      {% csrf_token %}
-      {% for field in form %}
-        <div class="form-group">
-          {{ field.label_tag }}
-          {{ field }}
-          {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-          {% endif %}
-          {% if field.errors %}
-            <div class="invalid-feedback d-block">
-              {% for error in field.errors %}
-                <div>{{ error }}</div>
-              {% endfor %}
-            </div>
-          {% endif %}
+      <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group text-dark">
+          {{ form|crispy }}
+        </fieldset>
+        <div class="d-grid gap-2 mt-4">
+          <button class="btn btn-primary btn-lg" type="submit">Login</button>
         </div>
-      {% endfor %}
-
-      <div class="form-group">
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a class="btn btn-link" href="{% url 'register' %}">Register</a>
-        <a class="btn btn-link" href="{% url 'password_reset' %}">Forgot Password?</a>
+      </form>
+      <div class="border-top border-secondary mt-4 pt-3 text-center">
+        <small class="text-muted">
+          Need an account? <a class="text-primary text-decoration-none ms-1" href="{% url 'register' %}">Sign Up Now</a>
+        </small>
+        <br>
+        <small class="text-muted">
+          Forgot Password? <a class="text-primary text-decoration-none ms-1" href="{% url 'password_reset' %}">Reset
+            Here</a>
+        </small>
       </div>
-    </form>
+    </div>
   </div>
+</div>
 {% endblock %}

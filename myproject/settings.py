@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'crispy_forms',
+    'crispy_bootstrap5',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -134,7 +135,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login redirect URL
 LOGIN_REDIRECT_URL = 'blog-home'
 LOGIN_URL = 'login'
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 LOGOUT_REDIRECT_URL = 'blog-home'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

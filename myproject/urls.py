@@ -27,9 +27,9 @@ from blog import views as blog_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', blog_views.landing, name='root-landing'),
-    path('register/', user_views.register, name='register'),
-    path('profile/', user_views.profile, name='profile'),
+    path('', blog_views.LandingView.as_view(), name='root-landing'),
+    path('register/', user_views.RegisterView.as_view(), name='register'),
+    path('profile/', user_views.ProfileView.as_view(), name='profile'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('password-reset/',
          auth_views.PasswordResetView.as_view(template_name='users/password_reset.html'),
@@ -44,6 +44,7 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
     path('logout/', user_views.CustomLogoutView.as_view(), name='logout'),
+    path('about/', blog_views.AboutView.as_view(), name='blog-about'),
     path('blog/', include('blog.urls')),
 ]
 

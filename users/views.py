@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
+from django.views.generic import CreateView, UpdateView, TemplateView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-
+from .models import Profile
 
 class CustomLogoutView(View):
     """Custom logout view that logs out user and redirects to login"""
@@ -21,44 +22,49 @@ class CustomLogoutView(View):
         messages.success(request, 'You have been logged out successfully.')
         return redirect('login')
 
+class RegisterView(CreateView):
+    form_class = UserRegisterForm
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('login')
 
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Your account has been created! You can now log in.')
-            return redirect('login')
-        # if form is invalid, fall through and re-render template with errors
-    else:
-        form = UserRegisterForm()
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Your account has been created! You can now log in.')
+        return response
 
-    return render(request, 'users/register.html', {'form': form})
+class ProfileView(LoginRequiredMixin, View):
+    template_name = 'users/profile.html'
 
+    def get(self, request, *args, **kwargs):
+        # Ensure profile exists
+        if not hasattr(request.user, 'profile'):
+            Profile.objects.get_or_create(user=request.user)
+            
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+        
+        context = {
+            'u_form': u_form,
+            'p_form': p_form
+        }
+        return render(request, self.template_name, context)
 
-@login_required(login_url='login')
-def profile(request):
-    # Ensure user has a profile (in case of existing users without one)
-    profile, created = request.user.profile if hasattr(request.user, 'profile') else None, False
-    if not profile:
-        from .models import Profile
-        profile, created = Profile.objects.get_or_create(user=request.user)
-    
-    if request.method == 'POST':
+    def post(self, request, *args, **kwargs):
+        # Ensure profile exists
+        if not hasattr(request.user, 'profile'):
+            Profile.objects.get_or_create(user=request.user)
+
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
             messages.success(request, 'Your profile has been updated successfully!')
             return redirect('profile')
-    else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
-    
-    context = {
-        'u_form': u_form,
-        'p_form': p_form
-    }
-    return render(request, 'users/profile.html', context)
+            
+        context = {
+            'u_form': u_form,
+            'p_form': p_form
+        }
+        return render(request, self.template_name, context)

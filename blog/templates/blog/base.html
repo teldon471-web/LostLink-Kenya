@@ -1,232 +1,274 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        {% if title %}
-        <title>Django Blog - {{ title }}</title>
-        {% else %}
-        <title>Django Blog</title>
-        {% endif %}
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{% static 'blog/main.css' %}">
-    </head>
-    <body>
-        <header class="site-header">
-            <div class="container">
-                <div class="navbar-wrapper">
-                    <div class="site-title">
-                        <a href="{% url 'blog-home' %}" aria-label="Home" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:0.6rem">
-                                                        <!-- Inline SVG logo to avoid static file fetching issues in development -->
-                                                        <svg width="140" height="32" viewBox="0 0 180 40" role="img" aria-labelledby="logoTitle logoDesc" xmlns="http://www.w3.org/2000/svg" class="site-logo" style="display:block;">
-                                                            <title id="logoTitle">LostLink Kenya</title>
-                                                            <desc id="logoDesc">A stylized chain link icon and the text LostLink Kenya</desc>
-                                                            <defs>
-                                                                <linearGradient id="g" x1="0" x2="1">
-                                                                    <stop offset="0" stop-color="#0ea5a4" />
-                                                                    <stop offset="1" stop-color="#2563eb" />
-                                                                </linearGradient>
-                                                            </defs>
-                                                            <rect rx="8" ry="8" width="40" height="40" fill="url(#g)" />
-                                                            <g transform="translate(10,8) scale(0.9)" fill="none" stroke="#fff" stroke-width="2">
-                                                                <path d="M2 10c0-3 3-6 6-6h4" stroke-linecap="round" stroke-linejoin="round" />
-                                                                <path d="M14 6c3 0 6 3 6 6v4" stroke-linecap="round" stroke-linejoin="round" />
-                                                            </g>
-                                                            <g transform="translate(50,25)">
-                                                                <text x="0" y="0" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a">LostLink</text>
-                                                                <text x="0" y="16" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#6b7280">Kenya</text>
-                                                            </g>
-                                                        </svg>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LostLink Kenya - {% block title %}{% endblock %}</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #818cf8;
+            --dark-bg: #FFE5B4;
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --text-light: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #FFE5B4;
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar {
+            background: rgba(255, 229, 180, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: #1e293b !important;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #4f46e5 !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #4f46e5, #6366f1);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .content-section {
+            padding: 2rem 0;
+            flex: 1;
+        }
+
+        footer {
+            background: #FFE5B4;
+            padding: 4rem 0 2rem;
+            margin-top: auto;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        footer h5 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        footer ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        footer a {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #4f46e5;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(79, 70, 229, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s;
+            color: #4f46e5;
+        }
+
+        .social-icon:hover {
+            background: #4f46e5;
+            color: #fff;
+            transform: translateY(-3px);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'root-landing' %}">
+                <i class="fas fa-link me-2"></i>LostLink Kenya
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog-home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'blog-about' %}">About</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'post-create' %}">
+                            <i class="fas fa-plus-circle me-1"></i> New Post
                         </a>
-                    </div>
-                    <button class="navbar-toggle" id="navbarToggle">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                    <nav class="navbar" id="navbar">
-                        <div class="nav-menu-wrapper" style="position:relative;">
-                            <button id="navMenuToggle" class="nav-menu-toggle" aria-haspopup="true" aria-expanded="false">Menu ▾</button>
-                            <ul id="navMenu" class="nav-menu" role="menu" aria-hidden="true">
-                                <li role="none"><a role="menuitem" class="nav-link" href="{% url 'blog-home' %}">Home</a></li>
-                                <li role="none"><a role="menuitem" class="nav-link" href="{% url 'blog-about' %}">About</a></li>
-                                {% if user.is_authenticated %}
-                                    <li role="none"><a role="menuitem" class="nav-link nav-link-primary" href="{% url 'post-create' %}">+ Report</a></li>
-                                    <li role="none"><a role="menuitem" class="nav-link" href="{% url 'profile' %}">Profile</a></li>
-                                    <li role="none"><a role="menuitem" class="nav-link" href="#">Hi, {{ user.username }}</a></li>
-                                    <li role="none"><a role="menuitem" class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-                                {% else %}
-                                    <li role="none"><a role="menuitem" class="nav-link" href="{% url 'login' %}">Login</a></li>
-                                    <li role="none"><a role="menuitem" class="nav-link nav-link-primary" href="{% url 'register' %}">Register</a></li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <img src="{{ user.profile.image.url }}" class="rounded-circle" width="30" height="30"
+                                alt="Profile">
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end glass-card border-0">
+                            <li><a class="dropdown-item text-dark" href="{% url 'profile' %}">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider bg-dark">
+                            </li>
+                            <li><a class="dropdown-item text-dark" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white ms-2 px-4"
+                            href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
-        </header>
-        <main class="container" role="main">
+        </div>
+    </nav>
+
+    <main class="content-section">
+        <div class="container">
             {% if messages %}
-            <div class="mb-3">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
-                {% endfor %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show glass-card border-0" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
             {% endif %}
 
             {% block content %}{% endblock %}
-        </main>
+        </div>
+    </main>
 
-        <footer class="container text-muted mt-4 mb-4">
-            <p class="mb-0">&copy; {{ now.year }} Django Blog</p>
-        </footer>
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <a class="navbar-brand mb-3 d-block" href="{% url 'root-landing' %}">
+                        <i class="fas fa-link me-2"></i>LostLink Kenya
+                    </a>
+                    <p class="text-muted">
+                        We help people reunite with their lost belongings through a community-driven platform.
+                        Simple, secure, and effective.
+                    </p>
+                    <div class="mt-4">
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'blog-home' %}">Home</a></li>
+                        <li><a href="{% url 'blog-about' %}">About Us</a></li>
+                        <li><a href="{% url 'post-create' %}">Report Item</a></li>
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Legal</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Safety Tips</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li class="text-muted mb-2"><i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya</li>
+                        <li class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> support@lostlink.ke</li>
+                        <li class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +254 700 000 000</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-4 pt-4 border-top border-secondary">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0">&copy; {% now "Y" %} LostLink Kenya. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="text-muted mb-0">Designed with <i class="fas fa-heart text-danger"></i> in Kenya</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-        <style>
-            /* Layout: put nav/menu to the right of the header */
-            .navbar-wrapper {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-            /* Ensure the menu wrapper pushes to the far right */
-            .nav-menu-wrapper {
-                margin-left: auto;
-            }
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
 
-            /* Site title / logo */
-            .site-title a { display: inline-flex; align-items: center; gap: 0.5rem; }
-            .site-logo { display: block; height: 32px; width: auto; }
-
-            /* Nav styles: desktop shows horizontal right-aligned menu, mobile keeps dropdown/toggle */
-            .nav-menu-toggle {
-                background: transparent;
-                border: 1px solid rgba(0,0,0,0.08);
-                padding: 0.4rem 0.8rem;
-                border-radius: 6px;
-                cursor: pointer;
-                font-weight: 600;
-                display: none; /* hidden on desktop */
-            }
-
-            /* Desktop / wide screens: show nav items horizontally and push to the far right */
-            .nav-menu {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
-                position: static;
-                background: transparent;
-                border: none;
-                box-shadow: none;
-                border-radius: 0;
-                z-index: 40;
-            }
-
-            .nav-menu li { padding: 0; }
-            .nav-menu .nav-link { display: inline-block; padding: 0.5rem 0.75rem; color: #0f172a; text-decoration: none; border-radius:6px; }
-            .nav-menu .nav-link:hover { background: #f3f4f6; }
-
-            /* On wide screens position the menu at the extreme right edge of the viewport */
-            @media (min-width: 769px) {
-                .nav-menu-wrapper {
-                    position: fixed;
-                    right: 12px;
-                    top: 12px;
-                    z-index: 60;
-                }
-            }
-
-            /* Show the dropdown behavior only on small screens */
-            @media (max-width: 768px) {
-                .nav-menu-toggle { display: inline-block; }
-                .nav-menu { position: absolute; right: 0; top: 38px; min-width: 200px; background: white; border: 1px solid #e6e6e6; box-shadow: 0 8px 24px rgba(16,24,40,0.12); border-radius: 8px; display: none; }
-                .nav-menu.active,
-                .nav-menu-wrapper:hover .nav-menu { display: block; }
-                .nav-menu .nav-link { display: block; padding: 0.6rem 1rem; }
-                .nav-menu.active { display: block; }
-            }
-        </style>
-        <script>
-            // Mobile Navbar Toggle
-            document.addEventListener('DOMContentLoaded', function() {
-                const navbarToggle = document.getElementById('navbarToggle');
-                const navbar = document.getElementById('navbar');
-
-                if (navbarToggle && navbar) {
-                    // Toggle menu on button click
-                    navbarToggle.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        navbarToggle.classList.toggle('active');
-                        navbar.classList.toggle('active');
-                    });
-
-                    // Touch-friendly: Close menu when a link is clicked
-                    const navLinks = navbar.querySelectorAll('.nav-link, .nav-user');
-                    navLinks.forEach(link => {
-                        link.addEventListener('click', function(e) {
-                            // Don't close if it's just the user greeting
-                            if (this.classList.contains('nav-user')) {
-                                return;
-                            }
-                            navbarToggle.classList.remove('active');
-                            navbar.classList.remove('active');
-                        });
-
-                        // Add touch feedback
-                        link.addEventListener('touchstart', function() {
-                            this.style.opacity = '0.8';
-                        });
-                        link.addEventListener('touchend', function() {
-                            this.style.opacity = '1';
-                        });
-                    });
-
-                    // Close menu when clicking outside
-                    document.addEventListener('click', function(e) {
-                        if (!navbarToggle.contains(e.target) && !navbar.contains(e.target)) {
-                            navbarToggle.classList.remove('active');
-                            navbar.classList.remove('active');
-                            // also close our dropdown menu if open
-                            const navMenu = document.getElementById('navMenu');
-                            const navMenuToggle = document.getElementById('navMenuToggle');
-                            if (navMenu && !navMenu.contains(e.target)) {
-                                navMenu.classList.remove('active');
-                                if (navMenuToggle) navMenuToggle.setAttribute('aria-expanded','false');
-                            }
-                        }
-                    });
-
-                    // Dropdown menu toggle (click)
-                    const navMenuToggle = document.getElementById('navMenuToggle');
-                    const navMenu = document.getElementById('navMenu');
-                    if (navMenuToggle && navMenu) {
-                        navMenuToggle.addEventListener('click', function(ev) {
-                            ev.stopPropagation();
-                            const isActive = navMenu.classList.toggle('active');
-                            navMenuToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-                        });
-
-                        // keyboard support: open on Enter/Space
-                        navMenuToggle.addEventListener('keydown', function(ev) {
-                            if (ev.key === 'Enter' || ev.key === ' ') {
-                                ev.preventDefault();
-                                const isActive = navMenu.classList.toggle('active');
-                                navMenuToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
-                            }
-                        });
-                    }
-
-                    // Prevent body scroll when menu is open (mobile)
-                    navbar.addEventListener('wheel', function(e) {
-                        // Allow scrolling within the menu itself
-                    }, false);
-                }
-            });
-        </script>
-    </body>
 </html>
