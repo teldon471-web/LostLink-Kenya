@@ -1,0 +1,5 @@
+<h2>Pay KES {{ amount }} to view contact details</h2>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" style="padding:10px; background:green; color:white;">Pay with M-Pesa</button>
+</form>

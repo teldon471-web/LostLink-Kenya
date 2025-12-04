@@ -20,16 +20,22 @@ from django.urls import path, include
 import os
 from django.conf import settings
 from django.conf.urls.static import static
-from users import views as user_views
 from blog import views as blog_views
 
-# removed duplicate media serving; appended below after urlpatterns is defined
-
+# URL Configuration
 urlpatterns = [
+    # Django Admin
     path('admin/', admin.site.urls),
+    
+    # Blog app - main content
     path('', blog_views.LandingView.as_view(), name='root-landing'),
-    path('register/', user_views.RegisterView.as_view(), name='register'),
-    path('profile/', user_views.ProfileView.as_view(), name='profile'),
+    path('blog/', include('blog.urls')),
+    path('about/', blog_views.AboutView.as_view(), name='blog-about'),
+    
+    # Users app - authentication and payments
+    path('', include('users.urls')),
+    
+    # Django auth views (password reset, login)
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('password-reset/',
          auth_views.PasswordResetView.as_view(template_name='users/password_reset.html'),
@@ -43,12 +49,16 @@ urlpatterns = [
     path('password-reset-complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
-    path('logout/', user_views.CustomLogoutView.as_view(), name='logout'),
-    path('about/', blog_views.AboutView.as_view(), name='blog-about'),
-    path('blog/', include('blog.urls')),
 ]
 
-# Serve media files during development. By default this runs when DEBUG=True.
-# You can also force media serving locally by setting the environment variable SERVE_MEDIA=1
+# Serve media files during development.
+# Always serve media files locally (Django only does this when DEBUG=True or explicitly configured).
+# For production, configure your web server (nginx/Apache) to serve /media/ from MEDIA_ROOT.
 if settings.DEBUG or os.environ.get('SERVE_MEDIA') == '1':
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # Also serve media in development even if DEBUG is not set (useful for local testing)
+    # Remove this block for production
+    import sys as _sys
+    if any(arg in _sys.argv for arg in ['runserver', 'test', 'shell']):
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

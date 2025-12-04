@@ -25,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-f%lh%js-%0x)o*pgfc%d$)ove19v+94*nr0%!ze853^wecn@di'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# For local development, set DEBUG=True. For production, set DEBUG=False explicitly.
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -145,3 +146,14 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+MPESA_CONSUMER_KEY = "Fbo27K75S3jVWLOMbWGiaAsaZ8KKXm7wIrAIGcN9mAPo1xuw"
+MPESA_CONSUMER_SECRET = "CaD07mJGrhA95WlAy2qalLw6siNljQSr50AhOCicEs6LwIMd33ygulcxe4w2IU7t"
+MPESA_SHORTCODE = "174379"
+MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+MPESA_STK_URL = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+MPESA_CALLBACK = "https://LostLink-Kenya/mpesa/callback/"
+MPESA_FIXED_PRICE = 100

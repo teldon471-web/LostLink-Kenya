@@ -5,11 +5,27 @@ from django.dispatch import receiver
 from PIL import Image  
 import os
 
+
+class PaymentAccess(models.Model):
+    """Model to track which users have paid to view which posts"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments")
+    post = models.ForeignKey("blog.Post", on_delete=models.CASCADE, related_name="payments")
+    paid = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "post")
+
+    def __str__(self):
+        return f"{self.user} - {self.post} - {self.paid}"
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=30, blank=True)
-    image = models.ImageField(upload_to='profile_pics', default='default.jpg')
+    phone_number = models.CharField(max_length=20, blank=True, help_text="Phone number for Mpesa payments (format: 254...)")
+    image = models.ImageField(upload_to='profile_pics/', default='default.jpg')
 
     def __str__(self):
         return f'{self.user.username} Profile'

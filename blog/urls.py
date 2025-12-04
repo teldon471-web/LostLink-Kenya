@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     HomeView, AboutView, LandingView, 
     PostListView, PostDetailView, PostCreateView, 
@@ -15,3 +15,4 @@ urlpatterns = [
     path('about/', AboutView.as_view(), name='blog-about'),
     path('landing/', LandingView.as_view(), name='landing'),
 ]
+

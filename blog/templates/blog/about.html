@@ -1,11 +1,15 @@
 {% extends 'blog/base.html' %}
+{% load static %}
 {% block content %}
-  <div class="about-container">
-    <!-- Hero Section -->
-    <section class="about-hero">
+  <!-- Full-bleed Hero Section -->
+  <section class="about-hero">
+    <div class="hero-inner">
       <h1>About LostLink Kenya</h1>
       <p class="subtitle">Reuniting Communities, One Item at a Time</p>
-    </section>
+    </div>
+  </section>
+
+  <div class="about-container">
 
     <!-- Mission Section -->
     <section class="about-section">
@@ -82,8 +86,8 @@
       </div>
     </section>
 
-    <!-- Why Choose Us Section -->
-    <section class="about-section alt-bg">
+  <!-- Why Choose Us Section -->
+  <section class="about-section alt-bg full-bleed">
       <h2 class="section-title">Why Choose LostLink Kenya?</h2>
       <div class="benefits-list">
         <div class="benefit-item">
@@ -105,8 +109,8 @@
       </div>
     </section>
 
-    <!-- Statistics Section -->
-    <section class="about-section">
+  <!-- Statistics Section -->
+  <section class="about-section full-bleed">
       <h2 class="section-title">📊 Our Impact</h2>
       <div class="stats-grid">
         <div class="stat-box">
@@ -145,8 +149,8 @@
       </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section class="about-section">
+  <!-- FAQ Section -->
+  <section class="about-section full-bleed">
       <h2 class="section-title">❓ Frequently Asked Questions</h2>
       <div class="faq-items">
         <div class="faq-item">
@@ -202,8 +206,8 @@
       </div>
     </section>
 
-    <!-- Image Gallery Section -->
-    <section class="about-section alt-bg">
+  <!-- Image Gallery Section -->
+  <section class="about-section alt-bg full-bleed">
       <h2 class="section-title">📸 Community Items Gallery</h2>
       <p style="text-align: center; color: #6b7280; margin-bottom: 2rem;">
         Browse photos of lost and found items shared by our community members
@@ -253,27 +257,39 @@
   </div>
 
   <style>
+    /* Center container so all sections have equal side borders/padding */
+    /* Make the whole About page full-bleed so content touches the viewport edges */
     .about-container {
-      max-width: 100%;
-      margin: 0;
-      padding: 0;
       width: 100vw;
       margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+      padding: 0;
     }
 
     /* Hero Section */
     .about-hero {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(59, 130, 246, 0.9) 100%),
-                  url('https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover no-repeat;
+      /* Full-bleed background that spans edge-to-edge */
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.6) 0%, rgba(59, 130, 246, 0.6) 100%),
+          url('https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
       color: white;
-      padding: 6rem 2rem;
       text-align: center;
       border-radius: 0;
       margin-bottom: 0;
       text-shadow: 1px 1px 3px rgba(112, 79, 79, 0.3);
+      background-size: cover;
+      /* full-bleed technique */
+      position: relative;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
       width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
+    }
+
+    /* inner container keeps hero content aligned with page */
+    .hero-inner {
+      /* keep vertical spacing but no side padding so content touches edges */
+      padding: 6rem 0;
     }
 
     .about-hero h1 {
@@ -291,15 +307,13 @@
 
     /* About Sections */
     .about-section {
-      padding: 4rem 3rem;
+      /* full-bleed sections with no side padding so content touches edges */
+      padding: 4rem 0;
       margin-bottom: 0;
       border-radius: 0;
       background: #ffffff;
       border: none;
       box-shadow: none;
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
       border-bottom: 1px solid #e6e6e6;
     }
 
@@ -313,6 +327,7 @@
     }
 
     /* Section Content Wrapper */
+    /* Remove max-width so section content also spans full width */
     .about-section .section-content,
     .about-section .steps-grid,
     .about-section .features-grid,
@@ -323,9 +338,25 @@
     .about-section .gallery-grid,
     .about-section .cta-buttons,
     .about-section .contact-info {
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: none;
+      margin-left: 0;
+      margin-right: 0;
+      padding: 0 1rem; /* small inner breathing space but still touching edges */
+    }
+
+    /* For specific sections that must touch edges entirely */
+    .about-section.full-bleed .section-content,
+    .about-section.full-bleed .section-title,
+    .about-section.full-bleed .steps-grid,
+    .about-section.full-bleed .features-grid,
+    .about-section.full-bleed .benefits-list,
+    .about-section.full-bleed .stats-grid,
+    .about-section.full-bleed .categories-grid,
+    .about-section.full-bleed .faq-items,
+    .about-section.full-bleed .gallery-grid,
+    .about-section.full-bleed .cta-buttons,
+    .about-section.full-bleed .contact-info {
+      padding: 0; /* remove side padding so these sections touch the viewport edges */
     }
 
     .section-title {
@@ -337,11 +368,12 @@
     }
 
     .section-content {
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: none;
+      margin: 0;
       line-height: 1.8;
       color: #4b5563;
       font-size: 1.05rem;
+      padding: 0 1rem;
     }
 
     .section-content p {

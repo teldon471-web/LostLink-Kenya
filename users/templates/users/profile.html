@@ -6,7 +6,7 @@
       <div class="profile-picture-section">
         <div class="profile-picture-wrapper">
           {% if user.profile.image and user.profile.image.name != 'default.jpg' %}
-            <img src="{{ user.profile.image.url }}" alt="Profile Picture" class="profile-pic-large">
+            <img src="{{ post.user.profile.image.url }}" alt="Profile Picture" class="profile-pic-large">
           {% else %}
             <div class="profile-pic-default">
               {{ user.username|first|upper }}
