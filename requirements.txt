@@ -4,4 +4,6 @@ django-crispy-forms==2.5.0
 crispy-bootstrap4==2025.6.0
 gunicorn==23.0.0
 python-decouple==3.8
-crispy-bootstrap5
+crispy-bootstrap5==2025.6.0
+requests==2.31.0
+
