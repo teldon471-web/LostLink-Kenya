@@ -33,7 +33,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-f%lh%js-%0x)o*pgfc%d$
 # For local development, set DEBUG=True. For production, set DEBUG=False explicitly.
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'lostlink-kenya-760j.onrender.com']
+
 
 
 # Application definition
