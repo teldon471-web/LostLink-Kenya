@@ -1,5 +1,5 @@
 :root{
-    --bg: #faf7f2;            /* soft off-white */
+    --bg: #ffffff;            /* pure white */
     --surface: #ffffff;       /* card bg */
     --text: #1f2933;          /* dark slate */
     --muted: #6b7280;         /* subdued */
@@ -15,8 +15,8 @@ html,body{height:100%}
 body{
     margin:0;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background:var(--bg);
-    color:var(--text);
+    background:#ffffff;
+    color:#1a1a1a;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
