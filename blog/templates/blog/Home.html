@@ -926,11 +926,14 @@
           filterToggle.classList.toggle('active');
         });
 
-        // Close dropdown when a filter changes
+        // Auto-submit form when a filter changes
         const filterInputs = filterDropdown.querySelectorAll('select, input[type="text"]');
+        const filterForm = filterDropdown.closest('form');
         filterInputs.forEach(input => {
           input.addEventListener('change', function() {
-            // Keep dropdown open, user may want to adjust multiple filters
+            if (filterForm) {
+              filterForm.submit();
+            }
           });
         });
 
