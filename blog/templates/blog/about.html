@@ -278,19 +278,29 @@
       text-shadow: 1px 1px 3px rgba(112, 79, 79, 0.3);
       background-size: cover;
       background-attachment: fixed;
-      /* full-bleed technique */
       position: relative;
       left: 50%;
       right: 50%;
       margin-left: -50vw;
       margin-right: -50vw;
       width: 100vw;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 80px;
+      box-sizing: border-box;
     }
 
     /* inner container keeps hero content aligned with page */
     .hero-inner {
-      /* keep vertical spacing but no side padding so content touches edges */
-      padding: 6rem 0;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .about-hero h1 {
@@ -298,6 +308,7 @@
       margin: 0;
       font-weight: 700;
       letter-spacing: 0.5px;
+      line-height: 1.2;
     }
 
     .about-hero .subtitle {
@@ -737,7 +748,16 @@
       }
 
       .about-hero {
-        padding: 4rem 1.5rem;
+        padding: 40px 40px;
+        min-height: 55vh;
+      }
+
+      .about-hero h1 {
+        font-size: 2rem;
+      }
+
+      .about-hero .subtitle {
+        font-size: 1rem;
       }
 
       .section-title {
@@ -769,13 +789,17 @@
         width: 100%;
         margin-left: 0;
         margin-right: 0;
-        padding: 3rem 1rem;
+        padding: 20px;
         background-attachment: scroll;
         background-position: center;
-        min-height: 350px;
+        min-height: 45vh;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .hero-inner {
+        max-width: 100%;
       }
 
       .about-hero h1 {
@@ -972,12 +996,16 @@
     /* Responsive - Small Mobile (480px and below) */
     @media (max-width: 480px) {
       .about-hero {
-        padding: 2rem 0.75rem;
+        padding: 20px;
         background-attachment: scroll;
-        min-height: 300px;
+        min-height: 40vh;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .hero-inner {
+        max-width: 100%;
       }
 
       .about-hero h1 {
