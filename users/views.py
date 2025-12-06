@@ -127,20 +127,20 @@ def pay_post(request, pk):
             if response_code == "0":
                 logger.info(f"✅ STK Push sent successfully for user {request.user.id}")
                 messages.success(request, "Payment prompt sent! Check your phone to complete the payment.")
-                return render(request, "payment/waiting.html", {"post": post, "amount": amount})
+                return render(request, "users/waiting.html", {"post": post, "amount": amount})
             else:
                 error_msg = response.get("ResponseDescription", "Payment request failed")
                 logger.warning(f"⚠️ STK Push failed: {error_msg}")
                 messages.error(request, f"Payment request failed: {error_msg}")
-                return render(request, "payment/pay_post.html", {"post": post, "amount": amount})
+                return render(request, "users/pay_post.html", {"post": post, "amount": amount})
                 
         except Exception as e:
             logger.error(f"❌ Error during payment: {str(e)}")
             messages.error(request, f"An error occurred: {str(e)}")
-            return render(request, "payment/pay_post.html", {"post": post, "amount": amount})
+            return render(request, "users/pay_post.html", {"post": post, "amount": amount})
     
     # GET request - show payment form
-    return render(request, "payment/pay_post.html", {"post": post, "amount": amount})
+    return render(request, "users/pay_post.html", {"post": post, "amount": amount})
 
 @csrf_exempt
 def mpesa_callback(request):
