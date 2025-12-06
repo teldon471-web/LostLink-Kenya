@@ -270,13 +270,14 @@
     .about-hero {
       /* Full-bleed background that spans edge-to-edge */
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.6) 0%, rgba(59, 130, 246, 0.6) 100%),
-          url('https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
+          url('https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
       color: white;
       text-align: center;
       border-radius: 0;
       margin-bottom: 0;
       text-shadow: 1px 1px 3px rgba(112, 79, 79, 0.3);
       background-size: cover;
+      background-attachment: fixed;
       /* full-bleed technique */
       position: relative;
       left: 50%;
@@ -769,7 +770,12 @@
         margin-left: 0;
         margin-right: 0;
         padding: 3rem 1rem;
-        background-attachment: fixed;
+        background-attachment: scroll;
+        background-position: center;
+        min-height: 350px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .about-hero h1 {
@@ -967,6 +973,11 @@
     @media (max-width: 480px) {
       .about-hero {
         padding: 2rem 0.75rem;
+        background-attachment: scroll;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .about-hero h1 {
