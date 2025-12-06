@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple vector logo for LostLink Kenya -->
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="40" viewBox="0 0 180 40" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">LostLink Kenya</title>
+  <desc id="logoDesc">A stylized chain link icon and the text LostLink Kenya</desc>
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0ea5a4" />
+      <stop offset="1" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <!-- circle / badge -->
+  <rect rx="8" ry="8" width="40" height="40" fill="url(#g)" />
+  <!-- simple link icon -->
+  <g transform="translate(10,8) scale(0.9)" fill="none" stroke="#fff" stroke-width="2">
+    <path d="M2 10c0-3 3-6 6-6h4" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M14 6c3 0 6 3 6 6v4" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M6 10l8-8" stroke-linecap="round" stroke-linejoin="round" opacity="0" />
+  </g>
+  <!-- text -->
+  <g transform="translate(50,25)">
+    <text x="0" y="0" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a">LostLink</text>
+    <text x="0" y="16" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#6b7280">Kenya</text>
+  </g>
+</svg>

@@ -1,5 +1,108 @@
-<h2>Pay KES {{ amount }} to view contact details</h2>
-<form method="POST">
-    {% csrf_token %}
-    <button type="submit" style="padding:10px; background:green; color:white;">Pay with M-Pesa</button>
-</form>
+{% extends "blog/base.html" %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white py-4">
+                    <h4 class="mb-0">💳 Payment Required to View Contact Details</h4>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <!-- Post Information -->
+                    <div class="alert alert-info mb-4">
+                        <h5 class="mb-2">📋 Item Details</h5>
+                        <p class="mb-0"><strong>Title:</strong> {{ post.title }}</p>
+                        <p class="mb-0"><strong>By:</strong> {{ post.author.username }}</p>
+                    </div>
+
+                    <!-- Fixed Amount -->
+                    <div class="alert alert-warning mb-4">
+                        <h3 class="mb-0 text-center">
+                            <strong>KES 100</strong>
+                        </h3>
+                        <p class="text-center mb-0 small">Fixed amount to view contact information</p>
+                    </div>
+
+                    <!-- Success Message -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Payment Form -->
+                    <form method="POST" id="paymentForm">
+                        {% csrf_token %}
+                        
+                        <!-- Phone Number Display -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>📱 M-Pesa Phone Number</strong></label>
+                            {% if user.profile.phone_number %}
+                                <input type="tel" class="form-control" value="{{ user.profile.phone_number }}" disabled>
+                                <small class="text-muted">This is the phone number linked to your M-Pesa account</small>
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>⚠️ Phone Number Missing!</strong><br>
+                                    You need to add your M-Pesa phone number to your profile before you can make payments.
+                                </div>
+                                <a href="{% url 'profile' %}" class="btn btn-warning btn-block w-100">
+                                    ➕ Add Phone Number to Profile
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Payment Button -->
+                        {% if user.profile.phone_number %}
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-success btn-lg" id="payBtn">
+                                <i class="fas fa-mobile-alt"></i> Pay KES 100 via M-Pesa
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <!-- Info Message -->
+                        <div class="alert alert-info">
+                            <strong>💡 How it works:</strong><br>
+                            <small>
+                                1️⃣ Click the payment button<br>
+                                2️⃣ M-Pesa popup appears on your phone<br>
+                                3️⃣ Enter your M-Pesa PIN<br>
+                                4️⃣ Payment confirmed - contact details unlocked!
+                            </small>
+                        </div>
+                    </form>
+
+                    <!-- Back Link -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'blog-home' %}" class="btn btn-secondary">
+                            ← Back to Items
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('paymentForm')?.addEventListener('submit', function(e) {
+        const payBtn = document.getElementById('payBtn');
+        if (payBtn) {
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing payment...';
+        }
+    });
+</script>
+
+<style>
+    .btn-block {
+        display: block;
+        width: 100%;
+    }
+</style>
+{% endblock %}

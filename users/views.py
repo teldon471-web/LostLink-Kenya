@@ -80,13 +80,25 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 @login_required
 def post_detail(request, pk):
-    post = Post.objects.get(pk=pk)
-    paid = PaymentAccess.objects.filter(user=request.user, post=post, paid=True).exists()
-
-    if request.GET.get("view") == "1" and not paid:
+    """
+    Display post details.
+    Requires payment of 100 KES to view contact/author information.
+    """
+    post = get_object_or_404(Post, pk=pk)
+    
+    # Check if user has already paid for this post
+    payment_access = PaymentAccess.objects.filter(
+        user=request.user,
+        post=post,
+        paid=True
+    ).exists()
+    
+    # If user has not paid, redirect to payment page
+    if not payment_access:
         return redirect("pay_post", pk=post.pk)
-
-    return render(request, "post_detail.html", {"post": post, "paid": paid})
+    
+    # User has paid - show full details
+    return render(request, "blog/post_detail.html", {"post": post, "paid": True})
 
 @login_required
 def pay_post(request, pk):
