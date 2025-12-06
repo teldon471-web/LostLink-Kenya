@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: lostlink-kenya
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
+    startCommand: gunicorn myproject.wsgi:application
+    healthCheckPath: /
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.13.0"
