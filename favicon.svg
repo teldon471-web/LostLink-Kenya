@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Transparent background -->
+  <rect width="256" height="256" fill="none"/>
+  
+  <!-- Main shape: Link chain symbolizing "Lost & Link" connection -->
+  <!-- Left circle -->
+  <circle cx="75" cy="128" r="35" fill="none" stroke="#2563eb" stroke-width="18"/>
+  
+  <!-- Right circle -->
+  <circle cx="181" cy="128" r="35" fill="none" stroke="#2563eb" stroke-width="18"/>
+  
+  <!-- Connection bridge (horizontal rectangle with rounded ends) -->
+  <rect x="110" y="118" width="36" height="20" rx="10" fill="#2563eb"/>
+</svg>
