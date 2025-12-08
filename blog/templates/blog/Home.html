@@ -646,27 +646,31 @@
 
     .items-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 2rem;
       margin-bottom: 2rem;
+      width: 100%;
+      max-width: 100%;
     }
 
     /* Item Card */
     .item-card {
       background: white;
-      border: 1px solid #e6e6e6;
-      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+      box-shadow: 0 2px 8px rgba(16,24,40,0.08);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       cursor: pointer;
+      min-width: 0;
+      height: 100%;
     }
 
     .item-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 24px rgba(16,24,40,0.12);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px rgba(16,24,40,0.15);
       border-color: #0f766e;
     }
 
@@ -945,7 +949,7 @@
       border-color: #333333;
     }
 
-    /* Responsive */
+    /* Responsive - Desktop to Tablet */
     @media (max-width: 1200px) {
       .carousel-slide {
         height: 350px;
@@ -956,13 +960,24 @@
       }
 
       .items-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.5rem;
       }
     }
 
+    /* Tablet to Mobile */
     @media (max-width: 768px) {
       .items-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .item-card {
+        border-radius: 10px;
+      }
+
+      .item-image-container {
+        height: 240px;
       }
 
       .section-title {
@@ -986,9 +1001,27 @@
       }
     }
 
+    /* Small Mobile */
     @media (max-width: 480px) {
       .items-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .item-card {
+        border-radius: 10px;
+      }
+
+      .item-image-container {
+        height: 220px;
+      }
+
+      .card-content {
+        padding: 1rem;
+      }
+
+      .item-title {
+        font-size: 1rem;
       }
     }
 
