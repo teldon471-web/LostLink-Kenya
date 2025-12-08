@@ -109,7 +109,7 @@
             <div class="item-image-container">
                 {% if post.image %}
                 <a href="{% url 'post-detail' post.pk %}">
-                  <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img">
+                  <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img" onerror="this.parentElement.parentElement.innerHTML='<div class=\"placeholder-image\"><span class=\"placeholder-icon\">{% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}</span></div>'">
                 </a>
               {% else %}
                 <a href="{% url 'post-detail' post.pk %}">

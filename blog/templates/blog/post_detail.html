@@ -5,7 +5,7 @@
     <!-- Image Section -->
       {% if post.image %}
       <div class="detail-image-container">
-        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="detail-image">
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="detail-image" onerror="this.style.display='none'; this.parentElement.style.display='none';">
       </div>
     {% endif %}
 

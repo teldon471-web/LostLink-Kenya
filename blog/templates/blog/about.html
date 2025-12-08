@@ -219,7 +219,10 @@
             <div class="gallery-item">
               <a href="{% url 'post-detail' post.pk %}" class="gallery-link">
                 {% if post.image %}
-                  <img src="{{ post.image.url }}" alt="{{ post.title }}" class="gallery-image">
+                  <img src="{{ post.image.url }}" alt="{{ post.title }}" class="gallery-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                  <div class="gallery-image" style="display:none;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;font-size:2rem;">
+                    {% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}
+                  </div>
                 {% else %}
                   <div class="gallery-image" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;font-size:2rem;">
                     {% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}

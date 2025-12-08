@@ -104,7 +104,10 @@
         <div class="card glass-card h-100 text-dark border-0 hover-lift">
             {% if post.image %}
             <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}"
-                style="height: 200px; object-fit: cover; border-radius: 16px 16px 0 0;">
+                style="height: 200px; object-fit: cover; border-radius: 16px 16px 0 0;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 200px; border-radius: 16px 16px 0 0; display: none;">
+                <i class="fas fa-image fa-3x text-dark opacity-25"></i>
+            </div>
             {% else %}
             <div class="bg-secondary d-flex align-items-center justify-content-center"
                 style="height: 200px; border-radius: 16px 16px 0 0;">
