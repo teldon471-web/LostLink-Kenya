@@ -102,81 +102,43 @@
     <h2 class="section-title">Recent Lost & Found Items</h2>
     
     {% if posts %}
-      <div class="items-grid">
+      <div class="items-scroll-container">
         {% for post in posts %}
-          <article class="item-card" data-href="{% url 'post-detail' post.pk %}">
-            <!-- Image Container -->
-            <div class="item-image-container">
+          <div class="item-card-compact">
+            <div class="card-inner">
+              <!-- Image on Top -->
+              <div class="compact-image-wrapper">
                 {% if post.image %}
-                <a href="{% url 'post-detail' post.pk %}">
-                  <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img" onerror="this.parentElement.parentElement.innerHTML='<div class=\"placeholder-image\"><span class=\"placeholder-icon\">{% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}</span></div>'">
-                </a>
-              {% else %}
-                <a href="{% url 'post-detail' post.pk %}">
-                  <div class="placeholder-image">
-                    <span class="placeholder-icon">
-                      {% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}
-                    </span>
-                  </div>
-                </a>
-              {% endif %}
-              <div class="item-badge-top">
-                <span class="badge {% if post.item_type == 'lost' %}badge-danger{% else %}badge-success{% endif %}">
-                  {{ post.get_item_type_display|upper }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Card Content -->
-            <div class="card-content">
-              <h3 class="item-title">
-                <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
-              </h3>
-
-              <!-- Category & Status Badges -->
-              <div class="badge-group">
-                <span class="badge badge-category">{{ post.get_category_display }}</span>
-                <span class="badge {% if post.status == 'active' %}badge-status-active{% else %}badge-status-resolved{% endif %}">
-                  {{ post.get_status_display }}
-                </span>
-              </div>
-
-              <!-- Location & Date Info -->
-              <div class="info-row">
-                <span class="info-item">
-                  <strong>📍</strong> {{ post.location|default:"Not specified" }}
-                </span>
-              </div>
-              <div class="info-row">
-                <span class="info-item">
-                  <strong>📅</strong> {{ post.date_item_lost_found|date:"M d, Y"|default:"Date not set" }}
-                </span>
-              </div>
-
-              <!-- Description Preview -->
-              <p class="item-description">
-                {{ post.content|truncatewords:25 }}
-              </p>
-
-              <!-- Author Info -->
-              <div class="author-info">
-                <div class="author-avatar">
-                  {% if post.author.profile.image %}
-                    <img src="{{ post.author.profile.image.url }}" alt="{{ post.author.username }}">
-                  {% else %}
-                    <div class="avatar-placeholder">{{ post.author.username|first|upper }}</div>
-                  {% endif %}
-                </div>
-                <div class="author-details">
-                  <p class="author-name">{{ post.author.username }}</p>
-                  <p class="post-date">{{ post.date_posted|timesince }} ago</p>
+                  <a href="{% url 'post-detail' post.pk %}">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="compact-image" onerror="this.parentElement.parentElement.innerHTML='<div class=\"placeholder-image\"><span class=\"placeholder-icon\">{% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}</span></div>'">
+                  </a>
+                {% else %}
+                  <a href="{% url 'post-detail' post.pk %}">
+                    <div class="placeholder-image">
+                      <span class="placeholder-icon">
+                        {% if post.item_type == 'lost' %}🔴{% else %}🟢{% endif %}
+                      </span>
+                    </div>
+                  </a>
+                {% endif %}
+                
+                <!-- Badge -->
+                <div class="item-badge-top">
+                  <span class="badge {% if post.item_type == 'lost' %}badge-danger{% else %}badge-success{% endif %}">
+                    {{ post.get_item_type_display|upper }}
+                  </span>
                 </div>
               </div>
 
-              <!-- Action Button -->
-              <a href="{% url 'post-detail' post.pk %}" class="btn btn-view-details">💳 View Details (KES 100)</a>
+              <!-- Details Below Image -->
+              <div class="compact-details">
+                <h4 class="compact-title">{{ post.title }}</h4>
+                <p class="compact-location">📍 {{ post.location|default:"Not specified" }}</p>
+                <p class="compact-date">📅 {{ post.date_item_lost_found|date:"M d, Y"|default:"Date not set" }}</p>
+                <a href="{% url 'post-detail' post.pk %}" class="compact-link">View Details</a>
+              </div>
             </div>
-          </article>
+          </div>
         {% endfor %}
       </div>
     {% else %}
@@ -644,56 +606,134 @@
       text-align: center;
     }
 
-    .items-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 100%;
+    /* Items Grid */
+    .items-grid-section {
+      margin: 3rem 0;
     }
 
-    /* Item Card */
-    .item-card {
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #1f2933;
+      text-align: center;
+    }
+
+    /* ===== ITEMS GRID LAYOUT IN ROWS ===== */
+    .items-scroll-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 1rem;
+    }
+
+    /* Remove scrollbar styling - no longer needed */
+
+    /* Compact Card Container */
+    .item-card-compact {
       background: white;
       border: 1px solid #e6e6e6;
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(16,24,40,0.08);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      cursor: pointer;
-      min-width: 0;
       height: 100%;
     }
 
-    .item-card:hover {
-      transform: translateY(-4px);
+    .item-card-compact:hover {
       box-shadow: 0 8px 24px rgba(16,24,40,0.12);
-      border-color: #0f766e;
+      transform: translateY(-4px);
     }
 
-    /* Image Container */
-    .item-image-container {
+    /* Inner Container - Vertical Stack */
+    .card-inner {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Image Wrapper - Top */
+    .compact-image-wrapper {
       position: relative;
       width: 100%;
-      height: 280px;
+      height: 190px;
       overflow: hidden;
       background: #f9fafb;
+      flex-shrink: 0;
+      border-radius: 12px 12px 0 0;
     }
 
-    .card-img {
+    .compact-image {
       width: 100%;
-      height: 100%;
+      height: 190px;
       object-fit: cover;
-      transition: transform 0.3s;
+      object-position: center;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: block;
     }
 
-    .item-card:hover .card-img {
-      transform: scale(1.05);
+    .item-card-compact:hover .compact-image {
+      transform: scale(1.08);
     }
 
+    /* Details - Bottom */
+    .compact-details {
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: hidden;
+    }
+
+    .compact-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #1f2933;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .compact-location,
+    .compact-date {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #6b7280;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .compact-link {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #2563eb;
+      text-decoration: none;
+      transition: color 0.2s;
+      margin-top: auto;
+    }
+
+    .compact-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+
+    /* Placeholder */
     .placeholder-image {
       width: 100%;
       height: 100%;
@@ -703,11 +743,17 @@
       justify-content: center;
       background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
       color: #9ca3af;
+      text-align: center;
     }
 
     .placeholder-icon {
       font-size: 3rem;
-      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    /* ===== OLD GRID STYLING (KEPT FOR REFERENCE) ===== */
+    .items-grid {
+      display: none;
     }
 
     /* Badge Top */
@@ -949,7 +995,7 @@
       border-color: #333333;
     }
 
-    /* Responsive - Desktop to Tablet */
+    /* ===== TABLET OPTIMIZATION (768px - 1200px) ===== */
     @media (max-width: 1200px) {
       .carousel-slide {
         height: 350px;
@@ -957,31 +1003,89 @@
 
       .reviews-container {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
       }
 
-      .items-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 1.5rem;
+      .items-scroll-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        max-width: 1100px;
+        padding: 0 0.75rem;
+      }
+
+      .item-card-compact {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .compact-image-wrapper {
+        height: 185px;
+        width: 100%;
+      }
+
+      .compact-image {
+        height: 185px;
+        width: 100%;
+      }
+
+      .compact-image {
+        height: 185px;
+      }
+
+      .compact-title {
+        font-size: 0.95rem;
       }
     }
 
-    /* Tablet to Mobile */
+    /* ===== MOBILE OPTIMIZATION (480px - 768px) ===== */
     @media (max-width: 768px) {
-      .items-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1.5rem;
+      .items-scroll-container {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        max-width: 800px;
+        padding: 0 0.5rem;
       }
 
-      .item-card {
-        border-radius: 10px;
+      .item-card-compact {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
 
-      .item-image-container {
-        height: 240px;
+      .compact-image-wrapper {
+        height: 180px;
+        width: 100%;
+      }
+
+      .compact-image {
+        height: 180px;
+        width: 100%;
+      }
+
+      .compact-details {
+        padding: 0.75rem;
+        gap: 0.4rem;
+      }
+
+      .compact-title {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 2;
+      }
+
+      .compact-location,
+      .compact-date {
+        font-size: 0.85rem;
+      }
+
+      .compact-link {
+        font-size: 0.85rem;
       }
 
       .section-title {
         font-size: 1.25rem;
+        margin-bottom: 1.5rem;
       }
 
       .carousel-slide {
@@ -994,6 +1098,7 @@
 
       .reviews-container {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
 
       .review-card {
@@ -1001,29 +1106,81 @@
       }
     }
 
-    /* Small Mobile */
+    /* ===== SMALL MOBILE OPTIMIZATION (<480px) ===== */
     @media (max-width: 480px) {
-      .items-grid {
+      .items-scroll-container {
         grid-template-columns: 1fr;
         gap: 1rem;
+        margin-bottom: 1rem;
+        max-width: 100%;
+        padding: 0 0.5rem;
       }
 
-      .item-card {
-        border-radius: 10px;
+      .item-card-compact {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
 
-      .item-image-container {
-        height: 220px;
+      .compact-image-wrapper {
+        height: 180px;
+        width: 100%;
       }
 
-      .card-content {
-        padding: 1rem;
+      .compact-image {
+        height: 180px;
+        width: 100%;
       }
 
-      .item-title {
-        font-size: 1rem;
+      .compact-details {
+        padding: 0.65rem;
+        gap: 0.35rem;
       }
-    }
+
+      .compact-title {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 2;
+      }
+
+      .compact-location,
+      .compact-date {
+        font-size: 0.8rem;
+      }
+
+      .compact-link {
+        font-size: 0.8rem;
+      }
+
+      .placeholder-icon {
+        font-size: 2.5rem;
+      }
+      }
+
+      .author-name {
+        font-size: 0.8rem;
+      }
+
+      .post-date {
+        font-size: 0.7rem;
+      }
+
+      .btn-view-details {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .section-title {
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .carousel-slide {
+        height: 200px;
+      }
+
+      .reviews-title {
+        font-size: 1.25rem;
+      }
 
       .carousel-btn {
         width: 40px;
@@ -1069,6 +1226,49 @@
 
       .stats-section {
         grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== LANDSCAPE ORIENTATION OPTIMIZATION ===== */
+    @media (orientation: landscape) and (max-height: 600px) {
+      .items-scroll-container {
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .item-card-compact {
+        flex: 0 0 calc(33.333% - 1.5rem);
+        max-width: calc(33.333% - 1.5rem);
+      }
+
+      .compact-image-wrapper {
+        height: 150px;
+      }
+
+      .compact-image {
+        width: auto;
+        height: 100%;
+        min-width: 100%;
+        object-fit: cover;
+      }
+
+      .compact-details {
+        padding: 0.75rem;
+        gap: 0.3rem;
+      }
+
+      .compact-title {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 1;
+      }
+
+      .compact-location,
+      .compact-date {
+        font-size: 0.75rem;
+      }
+
+      .compact-link {
+        font-size: 0.75rem;
       }
     }
   </style>
